@@ -173,4 +173,12 @@ task proguard(type: ProguardTask) {
 task createDist(type: CreateDistTask, dependsOn: proguard)
 
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact 'dist/baritone-api-fabric-1.7.0.jar'
+        }
+    }
+}
+
 build.finalizedBy(createDist)
