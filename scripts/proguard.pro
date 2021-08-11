@@ -1,3 +1,6 @@
+-dontobfuscate
+-dontshrink
+
 -keepattributes Signature
 -keepattributes *Annotation*
 
