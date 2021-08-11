@@ -17,7 +17,6 @@
 
 package baritone.command.defaults;
 
-import baritone.KeepName;
 import baritone.api.IBaritone;
 import baritone.api.command.Command;
 import baritone.api.command.argument.IArgConsumer;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.world.entity.Entity;
 
-@KeepName
 public class ComeCommand extends Command {
 
     public ComeCommand(IBaritone baritone) {
