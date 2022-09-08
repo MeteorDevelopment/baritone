@@ -1,3 +1,5 @@
+-keep class *
+
 -keepattributes Signature
 -keepattributes *Annotation*
 -keepattributes InnerClasses

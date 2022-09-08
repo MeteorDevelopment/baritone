@@ -20,6 +20,7 @@ import baritone.gradle.task.ProguardTask
 
 plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "maven-publish"
 }
 
 archivesBaseName = archivesBaseName + "-" + project.name
@@ -85,14 +86,24 @@ build.finalizedBy(createDist)
 
 publishing {
     publications {
-        mavenFabric(MavenPublication) {
-            artifactId = rootProject.archives_base_name + "-" + project.name
-            from components.java
+        maven(MavenPublication) {
+            artifact '../dist/baritone-fabric-api-' + version + '.jar'
         }
     }
 
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
+        maven {
+            name = "meteor-maven"
+            url = "https://maven.meteordev.org/snapshots"
+
+            credentials {
+                username = System.getenv("MAVEN_METEOR_ALIAS")
+                password = System.getenv("MAVEN_METEOR_TOKEN")
+            }
+
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
     }
 }

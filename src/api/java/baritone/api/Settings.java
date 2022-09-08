@@ -620,7 +620,7 @@ public final class Settings {
      * Allow chat based control of Baritone. Most likely should be disabled when Baritone is imported for use in
      * something else
      */
-    public final Setting<Boolean> chatControl = new Setting<>(true);
+    public final Setting<Boolean> chatControl = new Setting<>(false);
 
     /**
      * Some clients like Impact try to force chatControl to off, so here's a second setting to do it anyway
