@@ -24,6 +24,6 @@ public class BaritoneMixinConnector implements IMixinConnector {
 
     @Override
     public void connect() {
-        Mixins.addConfiguration("mixins.baritone.json");
+        Mixins.addConfiguration("mixins.baritone-meteor.json");
     }
 }
