@@ -9,6 +9,7 @@
   },
   "plugin": "baritone.launch.MixinPlugin",
   "client": [
+    "MixinChatScreen",
     "MixinChunkArray",
     "MixinClientChunkProvider",
     "MixinClientPlayerEntity",

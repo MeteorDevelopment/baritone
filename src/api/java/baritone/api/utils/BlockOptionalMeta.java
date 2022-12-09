@@ -25,7 +25,6 @@ import net.minecraft.resources.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
@@ -144,7 +143,7 @@ public final class BlockOptionalMeta {
 
     public static LootTables getManager() {
         if (manager == null) {
-            PackRepository rpl = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource());
+            PackRepository rpl = new PackRepository(new ServerPacksSource());
             rpl.reload();
             PackResources thePack = rpl.getAvailablePacks().iterator().next().open();
             ReloadableResourceManager resourceManager = new ReloadableResourceManager(PackType.SERVER_DATA);

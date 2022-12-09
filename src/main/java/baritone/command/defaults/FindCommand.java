@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 
 public class FindCommand extends Command {
@@ -46,7 +46,7 @@ public class FindCommand extends Command {
         toFind.stream()
                 .flatMap(block ->
                         ctx.worldData().getCachedWorld().getLocationsOf(
-                                Registry.BLOCK.getKey(block).getPath(),
+                                BuiltInRegistries.BLOCK.getKey(block).getPath(),
                                 Integer.MAX_VALUE,
                                 origin.x,
                                 origin.y,
