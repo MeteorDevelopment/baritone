@@ -19,6 +19,10 @@ repositories {
     mavenLocal()
     maven {
         name = 'WagYourMaven'
+        url = 'https://maven.wagyourtail.xyz/snapshots'
+    }
+    maven {
+        name = 'WagYourMavenReleases'
         url = 'https://maven.wagyourtail.xyz/releases'
     }
     maven {
@@ -40,5 +44,5 @@ dependencies {
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
     implementation group: 'commons-io', name: 'commons-io', version: '2.7'
 
-    implementation group: 'xyz.wagyourtail.unimined', name: 'xyz.wagyourtail.unimined.gradle.plugin', version: '1.2.9'
+    implementation group: 'xyz.wagyourtail.unimined', name: 'xyz.wagyourtail.unimined.gradle.plugin', version: '1.4.2-SNAPSHOT'
 }

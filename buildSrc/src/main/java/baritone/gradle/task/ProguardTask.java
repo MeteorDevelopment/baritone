@@ -18,7 +18,6 @@
 package baritone.gradle.task;
 
 import baritone.gradle.util.Determinizer;
-import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
@@ -78,7 +77,7 @@ public class ProguardTask extends BaritoneGradleTask {
 
     private File getMcJar() {
         MinecraftConfig mcc = ext.getMinecrafts().get(sourceSets.getByName("main"));
-        return mcc.getMinecraft(mcc.getMcPatcher().getProdNamespace(), mcc.getMcPatcher().getProdNamespace()).toFile();
+        return mcc.getMinecraftFileDev();
     }
 
     private boolean isMcJar(File f) {
@@ -175,7 +174,7 @@ public class ProguardTask extends BaritoneGradleTask {
     }
 
     private Stream<File> acquireDependencies() {
-        return getProject().getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().findByName("main").getCompileClasspath().getFiles()
+        return sourceSets.getByName("main").getCompileClasspath().getFiles()
                 .stream()
                 .filter(File::isFile);
     }
@@ -226,14 +225,20 @@ public class ProguardTask extends BaritoneGradleTask {
         }
 
         Path workingDirectory = getTemporaryFile("");
+        Process process = new ProcessBuilder(
+                Jvm.current().getJavaExecutable().getAbsolutePath(),
+                "-jar",
+                getTemporaryFile(String.format(PROGUARD_JAR, proguardVersion)).toString(),
+                "@" + workingDirectory.relativize(config)
+        )
+                .directory(workingDirectory.toFile())
+                .inheritIO()
+                .start();
 
-        getProject().javaexec(spec -> {
-            spec.workingDir(workingDirectory.toFile());
-            spec.args("@" + workingDirectory.relativize(config));
-            spec.classpath(getTemporaryFile(String.format(PROGUARD_JAR, proguardVersion)));
-
-            spec.executable(getJavaLauncherForProguard().getExecutablePath().getAsFile());
-        }).assertNormalExitValue().rethrowFailure();
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new RuntimeException("Proguard failed with exit code " + exitCode);
+        }
     }
 
 }

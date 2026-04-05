@@ -19,10 +19,12 @@ import baritone.gradle.task.CreateDistTask
 import baritone.gradle.task.ProguardTask
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "8.0.0"
+    id "com.gradleup.shadow" version "9.0.2"
 }
 
-archivesBaseName = archivesBaseName + "-fabric"
+base {
+    archivesName = base.archivesName.get() + "-fabric"
+}
 
 unimined.minecraft {
     fabric {
@@ -42,8 +44,8 @@ dependencies {
     for (sourceSet in rootProject.sourceSets) {
         if (sourceSet == rootProject.sourceSets.test) continue
         if (sourceSet == rootProject.sourceSets.schematica_api) continue
-        common sourceSet.output
-        shadowCommon sourceSet.output
+        common sourceSet.output.classesDirs
+        shadowCommon sourceSet.output.classesDirs
     }
     include "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
 }
@@ -59,6 +61,17 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowCommon]
     archiveClassifier.set "dev-shadow"
+
+    // Keep resources from root source sets (including launch mixin configs)
+    // inside the Fabric jar. The class dirs are already wired through shadowCommon.
+    for (sourceSet in rootProject.sourceSets) {
+        if (sourceSet == rootProject.sourceSets.test) continue
+        if (sourceSet == rootProject.sourceSets.schematica_api) continue
+
+        if (sourceSet.output.resourcesDir != null) {
+            from(sourceSet.output.resourcesDir)
+        }
+    }
 }
 
 remapJar {
@@ -92,7 +105,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier.set("sources")
 }
 
-build.finalizedBy(createDist)
+if (project.hasProperty("baritoneDist")) {
+    build.finalizedBy(createDist)
+}
 
 publishing {
     publications {

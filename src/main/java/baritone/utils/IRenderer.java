@@ -20,17 +20,8 @@ package baritone.utils;
 import baritone.api.BaritoneAPI;
 import baritone.api.Settings;
 import baritone.utils.accessor.IEntityRenderManager;
-import baritone.utils.accessor.IRenderPipelines;
-import baritone.utils.accessor.IRenderType;
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.DepthTestFunction;
-import com.mojang.blaze3d.platform.DestFactor;
-import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.phys.AABB;
@@ -43,35 +34,8 @@ public interface IRenderer {
     Tesselator tessellator = Tesselator.getInstance();
     IEntityRenderManager renderManager = (IEntityRenderManager) Minecraft.getInstance().getEntityRenderDispatcher();
     Settings settings = BaritoneAPI.getSettings();
-    RenderPipeline.Snippet BARITONE_LINES_SNIPPET = RenderPipeline.builder(((IRenderPipelines) new RenderPipelines()).getLinesSnippet())
-        .withBlend(new BlendFunction(
-            SourceFactor.SRC_ALPHA,
-            DestFactor.ONE_MINUS_SRC_ALPHA,
-            SourceFactor.ONE,
-            DestFactor.ZERO
-        ))
-        .withDepthWrite(false)
-        .withCull(false)
-        .buildSnippet();
-
-    RenderType linesWithDepthRenderType = ((IRenderType) RenderTypes.lines()).createRenderType(
-        "renderType/baritone_lines_with_depth",
-        RenderSetup.builder(RenderPipeline.builder(BARITONE_LINES_SNIPPET)
-            .withLocation("pipelines/baritone_lines_with_depth")
-            .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-            .build())
-            .bufferSize(256)
-            .createRenderSetup()
-    );
-    RenderType linesNoDepthRenderType = ((IRenderType) RenderTypes.lines()).createRenderType(
-        "renderType/baritone_lines_no_depth",
-        RenderSetup.builder(RenderPipeline.builder(BARITONE_LINES_SNIPPET)
-                .withLocation("pipelines/baritone_lines_no_depth")
-                .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-                .build())
-            .bufferSize(256)
-            .createRenderSetup()
-    );
+    RenderType linesWithDepthRenderType = RenderTypes.lines();
+    RenderType linesNoDepthRenderType = RenderTypes.lines();
 
     float[] color = new float[]{1.0F, 1.0F, 1.0F, 255.0F};
 
