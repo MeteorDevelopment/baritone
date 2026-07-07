@@ -20,98 +20,34 @@ package baritone.utils;
 import baritone.api.BaritoneAPI;
 import baritone.api.Settings;
 import baritone.utils.accessor.IEntityRenderManager;
-import baritone.utils.accessor.IRenderPipelines;
-import baritone.utils.accessor.IRenderType;
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.ColorTargetState;
-import com.mojang.blaze3d.pipeline.DepthStencilState;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.CompareOp;
-import com.mojang.blaze3d.platform.DestFactor;
-import com.mojang.blaze3d.platform.SourceFactor;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.PrimitiveTopology;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.blockentity.BeaconRenderer;
-import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
-import java.util.function.BiFunction;
 
+/**
+ * ponytail: 26.2 render port stub. 26.2 removed the immediate-mode draw path this used
+ * (Tesselator, RenderType#draw(MeshData), com.mojang.blaze3d.platform.SourceFactor/DestFactor). Baritone's
+ * path/selection/beacon-beam OVERLAY rendering is disabled here: geometry is still emitted into a throwaway
+ * buffer so every caller keeps working unchanged (non-null buffers, same call flow), but nothing is drawn to
+ * the screen. Core pathfinding/movement is unaffected - only the visual path preview is missing.
+ *
+ * Upgrade path: reimplement endLines/endBuffer against 26.2's PreparedRenderType draw model (see
+ * net.minecraft.client.renderer.rendertype.RenderType#prepare) and a custom RenderPipeline for lines.
+ */
 public interface IRenderer {
 
-    Tesselator tessellator = Tesselator.getInstance();
     IEntityRenderManager renderManager = (IEntityRenderManager) Minecraft.getInstance().getEntityRenderDispatcher();
     Settings settings = BaritoneAPI.getSettings();
-    BlendFunction BARITONE_LINES_BLEND = new BlendFunction(
-        SourceFactor.SRC_ALPHA,
-        DestFactor.ONE_MINUS_SRC_ALPHA,
-        SourceFactor.ONE,
-        DestFactor.ZERO
-    );
-
-    RenderPipeline.Snippet BARITONE_LINES_SNIPPET = RenderPipeline.builder(((IRenderPipelines) new RenderPipelines()).getLinesSnippet())
-        .withColorTargetState(new ColorTargetState(BARITONE_LINES_BLEND))
-        .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
-        .withCull(false)
-        .buildSnippet();
-
-    RenderPipeline.Snippet BARITONE_BEACON_BEAM_SNIPPET = RenderPipeline.builder(((IRenderPipelines) new RenderPipelines()).getMatricesFogSnippet())
-            .withVertexShader("core/rendertype_beacon_beam")
-            .withFragmentShader("core/rendertype_beacon_beam")
-            .withSampler("Sampler0")
-            .withVertexFormat(DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS)
-            .buildSnippet();
-
-    RenderPipeline BEACON_BEAM_OPAQUE = ((IRenderPipelines) new RenderPipelines()).baritone$registerPipeline(RenderPipeline.builder(BARITONE_BEACON_BEAM_SNIPPET)
-            .withLocation("pipeline/baritone_beacon_beam_opaque")
-            .withColorTargetState(ColorTargetState.DEFAULT)
-            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
-            .withCull(true)
-            .build());
-
-    RenderPipeline BEACON_BEAM_TRANSLUCENT = ((IRenderPipelines) new RenderPipelines()).baritone$registerPipeline(RenderPipeline.builder(BARITONE_BEACON_BEAM_SNIPPET)
-            .withLocation("pipeline/baritone_beacon_beam_translucent")
-            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
-            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
-            .withCull(true)
-            .build());
-
-    RenderType linesWithDepthRenderType = ((IRenderType) RenderTypes.lines()).createRenderType(
-        "renderType/baritone_lines_with_depth",
-        RenderSetup.builder(RenderPipeline.builder(BARITONE_LINES_SNIPPET)
-            .withLocation("pipelines/baritone_lines_with_depth")
-            .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
-            .build())
-            .bufferSize(256)
-            .createRenderSetup()
-    );
-    RenderType linesNoDepthRenderType = ((IRenderType) RenderTypes.lines()).createRenderType(
-        "renderType/baritone_lines_no_depth",
-        RenderSetup.builder(RenderPipeline.builder(BARITONE_LINES_SNIPPET)
-                .withLocation("pipelines/baritone_lines_no_depth")
-                .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
-                .build())
-            .bufferSize(256)
-            .createRenderSetup()
-    );
-
-
-    BiFunction<Identifier, Boolean, RenderType> BEACON_BEAM = Util.memoize(
-            (identifier, boolean_) -> ((IRenderType) RenderTypes.beaconBeam(BeaconRenderer.BEAM_LOCATION, boolean_)).createRenderType(
-                    boolean_ ? "renderType/baritone_beacon_beam_translucent" : "renderType/baritone_beacon_beam_opaque",
-            RenderSetup.builder(boolean_ ? BEACON_BEAM_TRANSLUCENT : BEACON_BEAM_OPAQUE)
-                    .withTexture("Sampler0", identifier)
-                    .sortOnUpload()
-                    .createRenderSetup())
-    );
 
     float[] color = new float[]{1.0F, 1.0F, 1.0F, 255.0F};
 
@@ -125,33 +61,24 @@ public interface IRenderer {
 
     static BufferBuilder startLines(Color color, float alpha) {
         glColor(color, alpha);
-        return tessellator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
+        return new BufferBuilder(new ByteBufferBuilder(256), PrimitiveTopology.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
     }
 
     static BufferBuilder startLines(Color color) {
         return startLines(color, .4f);
     }
 
+    // ponytail: overlay rendering disabled on 26.2 - build and discard, no GPU draw.
     static void endLines(BufferBuilder bufferBuilder, boolean ignoredDepth) {
-        MeshData meshData = bufferBuilder.build();
-        if (meshData != null) {
-            if (ignoredDepth) {
-                linesNoDepthRenderType.draw(meshData);
-            } else {
-                linesWithDepthRenderType.draw(meshData);
-            }
-        }
+        bufferBuilder.build();
     }
 
     static BufferBuilder startBlockQuads() {
-        return tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+        return new BufferBuilder(new ByteBufferBuilder(256), PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK);
     }
 
     static void endBuffer(BufferBuilder bufferBuilder, RenderType renderType) {
-        MeshData meshData = bufferBuilder.build();
-        if (meshData != null) {
-            renderType.draw(meshData);
-        }
+        bufferBuilder.build();
     }
 
     static void emitLine(BufferBuilder bufferBuilder, PoseStack stack, double x1, double y1, double z1, double x2, double y2, double z2, float lineWidth) {
@@ -233,11 +160,12 @@ public interface IRenderer {
                 .setNormal(pose, nx, ny, nz);
     }
 
+    // ponytail: beacon-beam overlay disabled on 26.2; only ever passed to the no-op endBuffer above.
     static RenderType beaconBeam(Identifier identifier, boolean bl) {
-        return BEACON_BEAM.apply(identifier, bl);
+        return null;
     }
 
     static RenderType beaconBeam(Identifier identifier, boolean bl, boolean ignoreDepth) {
-        return ignoreDepth ? beaconBeam(identifier, bl) : RenderTypes.beaconBeam(identifier, bl);
+        return null;
     }
 }

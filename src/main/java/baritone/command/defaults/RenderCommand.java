@@ -38,14 +38,8 @@ public class RenderCommand extends Command {
         args.requireMax(0);
         BetterBlockPos origin = ctx.playerFeet();
         int renderDistance = (ctx.minecraft().options.renderDistance().get() + 1) * 16;
-        ctx.minecraft().levelRenderer.setBlocksDirty(
-                origin.x - renderDistance,
-                ctx.world().getMinY(),
-                origin.z - renderDistance,
-                origin.x + renderDistance,
-                ctx.world().getMaxY(),
-                origin.z + renderDistance
-        );
+        // 26.2: LevelRenderer#setBlocksDirty(region) was removed; force a full re-render instead.
+        ctx.minecraft().levelExtractor.allChanged();
         logDirect("Done");
     }
 

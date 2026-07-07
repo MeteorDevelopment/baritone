@@ -15,6 +15,7 @@
     "MixinCommandSuggestionHelper",
     "MixinEntity",
     "MixinEntityRenderManager",
+    "MixinGui",
     "MixinFireworkRocketEntity",
     "MixinItemStack",
     "MixinLivingEntity",
@@ -30,7 +31,6 @@
     "MixinScreen",
     "MixinWorldRenderer"
   ],
-  "mixins": [
-  ],
+  "mixins": [],
   "plugin": "baritone.launch.FabricMixinPlugin"
 }

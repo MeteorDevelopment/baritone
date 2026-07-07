@@ -74,8 +74,8 @@ public final class PathRenderer implements IRenderer {
         if (ctx.world() == null) {
             return;
         }
-        if (ctx.minecraft().screen instanceof GuiClick) {
-            ((GuiClick) ctx.minecraft().screen).onRender(event.getModelViewStack(), event.getProjectionMatrix());
+        if (((baritone.utils.accessor.IGui) ctx.minecraft().gui).getScreen() instanceof GuiClick) {
+            ((GuiClick) ((baritone.utils.accessor.IGui) ctx.minecraft().gui).getScreen()).onRender(event.getModelViewStack(), event.getProjectionMatrix());
         }
 
         final float partialTicks = event.getPartialTicks();

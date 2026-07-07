@@ -162,31 +162,11 @@ public class MixinMinecraft {
         );
     }
 
-    @Redirect(
-            method = "tick",
-            at = @At(
-                    value = "FIELD",
-                    opcode = Opcodes.GETFIELD,
-                    target = "Lnet/minecraft/client/Minecraft;screen:Lnet/minecraft/client/gui/screens/Screen;"
-            ),
-            slice = @Slice(
-                    from = @At(
-                            value = "INVOKE",
-                            target = "Lnet/minecraft/client/gui/components/DebugScreenOverlay;showDebugScreen()Z"
-                    ),
-                    to = @At(
-                            value = "CONSTANT",
-                            args = "stringValue=Keybindings"
-                    )
-            )
-    )
-    private Screen passEvents(Minecraft instance) {
-        // allow user input is only the primary baritone
-        if (BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing() && player != null) {
-            return null;
-        }
-        return instance.screen;
-    }
+    // ponytail: removed in the 26.2 port. This @Redirect targeted Minecraft#tick reading the
+    // Minecraft.screen field, which moved to Gui in 26.2 (making both the injection point and
+    // instance.screen invalid). It only allowed user input to pass through while pathing with a
+    // screen open - a niche convenience, not core pathfinding. Restore by retargeting to the new
+    // 26.2 input/screen flow if that behaviour is wanted.
 
     // TODO
     // FIXME
