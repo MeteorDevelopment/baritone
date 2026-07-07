@@ -15,15 +15,34 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.api.utils.gui;
+package baritone.api.utils;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.network.chat.Component;
+/**
+ * Simple generic pair, replacing {@code net.minecraft.util.Tuple} which was removed in Minecraft 26.2.
+ * Kept API-compatible with the vanilla class Baritone previously used (getA/getB/setA/setB).
+ */
+public class Tuple<A, B> {
+    private A a;
+    private B b;
 
-public class BaritoneToast {
-    private static final SystemToast.SystemToastId BARITONE_TOAST_ID = new SystemToast.SystemToastId(5000L);
-    public static void addOrUpdate(Component title, Component subtitle) {
-        SystemToast.addOrUpdate(Minecraft.getInstance().gui.toastManager(), BARITONE_TOAST_ID, title, subtitle);
+    public Tuple(A a, B b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public A getA() {
+        return a;
+    }
+
+    public void setA(A a) {
+        this.a = a;
+    }
+
+    public B getB() {
+        return b;
+    }
+
+    public void setB(B b) {
+        this.b = b;
     }
 }

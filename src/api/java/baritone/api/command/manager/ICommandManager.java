@@ -21,7 +21,7 @@ import baritone.api.IBaritone;
 import baritone.api.command.ICommand;
 import baritone.api.command.argument.ICommandArgument;
 import baritone.api.command.registry.Registry;
-import net.minecraft.util.Tuple;
+import baritone.api.utils.Tuple;
 
 import java.util.List;
 import java.util.stream.Stream;

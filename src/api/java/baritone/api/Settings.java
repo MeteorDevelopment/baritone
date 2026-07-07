@@ -1278,7 +1278,7 @@ public final class Settings {
     public final Setting<Consumer<Component>> logger = new Setting<>((msg) -> {
         try {
             final GuiMessageTag tag = useMessageTag.value ? Helper.MESSAGE_TAG : null;
-            final ChatComponent chat = Minecraft.getInstance().gui.getChat();
+            final ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
             if (tag != null) {
                 chat.addPlayerMessage(msg, new MessageSignature(new byte[MessageSignature.BYTES]), tag);
             } else {

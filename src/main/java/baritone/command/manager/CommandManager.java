@@ -30,7 +30,7 @@ import baritone.api.command.registry.Registry;
 import baritone.command.argument.ArgConsumer;
 import baritone.command.argument.CommandArguments;
 import baritone.command.defaults.DefaultCommands;
-import net.minecraft.util.Tuple;
+import baritone.api.utils.Tuple;
 
 import java.util.List;
 import java.util.Locale;

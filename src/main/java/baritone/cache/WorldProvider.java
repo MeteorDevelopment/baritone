@@ -22,7 +22,7 @@ import baritone.api.cache.IWorldProvider;
 import baritone.api.utils.IPlayerContext;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Tuple;
+import baritone.api.utils.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelResource;
 import org.apache.commons.lang3.SystemUtils;

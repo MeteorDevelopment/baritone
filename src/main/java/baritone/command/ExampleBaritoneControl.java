@@ -38,7 +38,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Tuple;
+import baritone.api.utils.Tuple;
 import net.minecraft.util.Util;
 
 import java.util.List;

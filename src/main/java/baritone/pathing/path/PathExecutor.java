@@ -34,7 +34,7 @@ import baritone.pathing.movement.movements.*;
 import baritone.utils.BlockStateInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.Tuple;
+import baritone.api.utils.Tuple;
 import net.minecraft.world.phys.Vec3;
 import java.util.*;
 

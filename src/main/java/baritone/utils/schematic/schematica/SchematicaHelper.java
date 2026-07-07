@@ -21,7 +21,7 @@ import baritone.api.schematic.IStaticSchematic;
 import com.github.lunatrius.schematica.Schematica;
 import com.github.lunatrius.schematica.proxy.ClientProxy;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
+import baritone.api.utils.Tuple;
 import java.util.Optional;
 
 public enum SchematicaHelper {
