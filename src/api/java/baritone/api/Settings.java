@@ -859,7 +859,7 @@ public final class Settings {
     /**
      * Echo commands to chat when they are run
      */
-    public final Setting<Boolean> echoCommands = new Setting<>(true);
+    public final Setting<Boolean> echoCommands = new Setting<>(false);
 
     /**
      * Censor coordinates in goals and block positions
