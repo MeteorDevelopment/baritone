@@ -49,7 +49,7 @@ public class MixinNetworkManager {
     private PacketFlow receiving;
 
     @Inject(
-            method = "sendPacket",
+            method = "send",
             at = @At("HEAD")
     )
     private void preDispatchPacket(final Packet<?> packet, final ChannelFutureListener channelFutureListener, final boolean flush, final CallbackInfo ci) {
@@ -65,7 +65,7 @@ public class MixinNetworkManager {
     }
 
     @Inject(
-            method = "sendPacket",
+            method = "send",
             at = @At("RETURN")
     )
     private void postDispatchPacket(Packet<?> packet, ChannelFutureListener packetSendListener, boolean flush, CallbackInfo ci) {

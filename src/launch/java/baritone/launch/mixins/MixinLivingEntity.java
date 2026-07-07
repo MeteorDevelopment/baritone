@@ -81,12 +81,16 @@ public abstract class MixinLivingEntity extends Entity {
         return self.getYRot();
     }
 
+    // ponytail: 26.2 refactored elytra movement (updateFallFlyingMovement/travelFallFlying no longer exist).
+    // require = 0 keeps the mixin non-fatal - elytra rotation compensation is inert on 26.2, core pathfinding
+    // is unaffected. Remap to the new travelFlying/updateFallFlying flow to restore elytra support.
     @Inject(
             method = "updateFallFlyingMovement",
             at = @At(
                     value = "INVOKE",
                     target = "net/minecraft/world/entity/LivingEntity.getLookAngle()Lnet/minecraft/world/phys/Vec3;"
-            )
+            ),
+            require = 0
     )
     private void onPreElytraMove(Vec3 direction, final CallbackInfoReturnable<Vec3> cir) {
         this.getBaritone().ifPresent(baritone -> {
@@ -103,7 +107,8 @@ public abstract class MixinLivingEntity extends Entity {
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/LivingEntity;move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V",
                     shift = At.Shift.AFTER
-            )
+            ),
+            require = 0
     )
     private void onPostElytraMove(final CallbackInfo ci) {
         if (this.elytraRotationEvent != null) {
