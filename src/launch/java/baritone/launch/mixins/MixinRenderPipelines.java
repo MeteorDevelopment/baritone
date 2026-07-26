@@ -30,7 +30,7 @@ public class MixinRenderPipelines implements IRenderPipelines {
     private static RenderPipeline.Snippet LINES_SNIPPET;
 
     @Final @Shadow
-    private static RenderPipeline.Snippet MATRICES_FOG_SNIPPET;
+    private static RenderPipeline.Snippet BEACON_BEAM_SNIPPET;
 
     @Shadow
     private static RenderPipeline register(final RenderPipeline renderPipeline) { return null; }
@@ -40,8 +40,8 @@ public class MixinRenderPipelines implements IRenderPipelines {
     }
 
     @Override
-    public RenderPipeline.Snippet getMatricesFogSnippet() {
-        return MATRICES_FOG_SNIPPET;
+    public RenderPipeline.Snippet getBeaconBeamSnippet() {
+        return BEACON_BEAM_SNIPPET;
     }
 
     @Override

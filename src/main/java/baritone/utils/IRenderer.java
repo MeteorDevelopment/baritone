@@ -22,16 +22,17 @@ import baritone.api.Settings;
 import baritone.utils.accessor.IEntityRenderManager;
 import baritone.utils.accessor.IRenderPipelines;
 import baritone.utils.accessor.IRenderType;
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.BlendFactor;
 import com.mojang.blaze3d.platform.CompareOp;
-import com.mojang.blaze3d.platform.DestFactor;
-import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.StagedVertexBuffer;
 import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -47,14 +48,14 @@ import java.util.function.BiFunction;
 
 public interface IRenderer {
 
-    Tesselator tessellator = Tesselator.getInstance();
+    RenderBatch renderBatch = new RenderBatch();
     IEntityRenderManager renderManager = (IEntityRenderManager) Minecraft.getInstance().getEntityRenderDispatcher();
     Settings settings = BaritoneAPI.getSettings();
     BlendFunction BARITONE_LINES_BLEND = new BlendFunction(
-        SourceFactor.SRC_ALPHA,
-        DestFactor.ONE_MINUS_SRC_ALPHA,
-        SourceFactor.ONE,
-        DestFactor.ZERO
+            BlendFactor.SRC_ALPHA,
+            BlendFactor.ONE_MINUS_SRC_ALPHA,
+            BlendFactor.ONE,
+            BlendFactor.ZERO
     );
 
     RenderPipeline.Snippet BARITONE_LINES_SNIPPET = RenderPipeline.builder(((IRenderPipelines) new RenderPipelines()).getLinesSnippet())
@@ -63,12 +64,8 @@ public interface IRenderer {
         .withCull(false)
         .buildSnippet();
 
-    RenderPipeline.Snippet BARITONE_BEACON_BEAM_SNIPPET = RenderPipeline.builder(((IRenderPipelines) new RenderPipelines()).getMatricesFogSnippet())
-            .withVertexShader("core/rendertype_beacon_beam")
-            .withFragmentShader("core/rendertype_beacon_beam")
-            .withSampler("Sampler0")
-            .withVertexFormat(DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS)
-            .buildSnippet();
+    RenderPipeline.Snippet BARITONE_BEACON_BEAM_SNIPPET =
+            ((IRenderPipelines) new RenderPipelines()).getBeaconBeamSnippet();
 
     RenderPipeline BEACON_BEAM_OPAQUE = ((IRenderPipelines) new RenderPipelines()).baritone$registerPipeline(RenderPipeline.builder(BARITONE_BEACON_BEAM_SNIPPET)
             .withLocation("pipeline/baritone_beacon_beam_opaque")
@@ -90,7 +87,6 @@ public interface IRenderer {
             .withLocation("pipelines/baritone_lines_with_depth")
             .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
             .build())
-            .bufferSize(256)
             .createRenderSetup()
     );
     RenderType linesNoDepthRenderType = ((IRenderType) RenderTypes.lines()).createRenderType(
@@ -99,7 +95,6 @@ public interface IRenderer {
                 .withLocation("pipelines/baritone_lines_no_depth")
                 .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
                 .build())
-            .bufferSize(256)
             .createRenderSetup()
     );
 
@@ -125,7 +120,7 @@ public interface IRenderer {
 
     static BufferBuilder startLines(Color color, float alpha) {
         glColor(color, alpha);
-        return tessellator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
+        return renderBatch.begin(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH, PrimitiveTopology.LINES);
     }
 
     static BufferBuilder startLines(Color color) {
@@ -133,25 +128,19 @@ public interface IRenderer {
     }
 
     static void endLines(BufferBuilder bufferBuilder, boolean ignoredDepth) {
-        MeshData meshData = bufferBuilder.build();
-        if (meshData != null) {
-            if (ignoredDepth) {
-                linesNoDepthRenderType.draw(meshData);
-            } else {
-                linesWithDepthRenderType.draw(meshData);
-            }
-        }
+        renderBatch.draw(ignoredDepth ? linesNoDepthRenderType : linesWithDepthRenderType);
     }
 
     static BufferBuilder startBlockQuads() {
-        return tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+        return renderBatch.begin(DefaultVertexFormat.BLOCK, PrimitiveTopology.QUADS);
     }
 
     static void endBuffer(BufferBuilder bufferBuilder, RenderType renderType) {
-        MeshData meshData = bufferBuilder.build();
-        if (meshData != null) {
-            renderType.draw(meshData);
-        }
+        renderBatch.draw(renderType);
+    }
+
+    static void endFrame() {
+        renderBatch.endFrame();
     }
 
     static void emitLine(BufferBuilder bufferBuilder, PoseStack stack, double x1, double y1, double z1, double x2, double y2, double z2, float lineWidth) {
@@ -239,5 +228,44 @@ public interface IRenderer {
 
     static RenderType beaconBeam(Identifier identifier, boolean bl, boolean ignoreDepth) {
         return ignoreDepth ? beaconBeam(identifier, bl) : RenderTypes.beaconBeam(identifier, bl);
+    }
+
+    final class RenderBatch {
+        private final StagedVertexBuffer stagedBuffer =
+                new StagedVertexBuffer(() -> "Baritone immediate geometry", 256 * 1024);
+        private StagedVertexBuffer.Draw draw;
+
+        private BufferBuilder begin(VertexFormat format, PrimitiveTopology primitiveTopology) {
+            if (draw != null) {
+                throw new IllegalStateException("Previous Baritone render batch was not drawn");
+            }
+
+            draw = stagedBuffer.appendDraw(format, primitiveTopology);
+            return (BufferBuilder) stagedBuffer.getVertexBuilder(draw);
+        }
+
+        private void draw(RenderType renderType) {
+            if (draw == null) {
+                throw new IllegalStateException("No Baritone render batch is active");
+            }
+
+            try {
+                stagedBuffer.upload();
+                StagedVertexBuffer.ExecuteInfo executeInfo = stagedBuffer.getExecuteInfo(draw);
+                if (executeInfo != null) {
+                    renderType.prepare().drawFromBuffer(executeInfo);
+                }
+            } finally {
+                stagedBuffer.endDraw();
+                draw = null;
+            }
+        }
+
+        private void endFrame() {
+            if (draw != null) {
+                throw new IllegalStateException("Cannot end the Baritone render frame with an active batch");
+            }
+            stagedBuffer.endFrame();
+        }
     }
 }
