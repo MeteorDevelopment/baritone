@@ -76,7 +76,7 @@ public class SettingsUtil {
             forEachLine(settingsByName(settingsName), line -> {
                 Matcher matcher = SETTING_PATTERN.matcher(line);
                 if (!matcher.matches()) {
-                    Helper.HELPER.logDirect("Invalid syntax in setting file: " + line);
+                    Helper.HELPER.logDirect(BaritoneI18n.translate("setting.set.invalidSyntax", line));
                     return;
                 }
 
@@ -89,14 +89,14 @@ public class SettingsUtil {
                 try {
                     parseAndApply(settings, settingName, settingValue);
                 } catch (Exception ex) {
-                    Helper.HELPER.logDirect("Unable to parse line " + line);
+                    Helper.HELPER.logDirect(BaritoneI18n.translate("setting.set.unableToParse", line));
                     ex.printStackTrace();
                 }
             });
         } catch (NoSuchFileException ignored) {
-            Helper.HELPER.logDirect("Baritone settings file not found, resetting.");
+            Helper.HELPER.logDirect(BaritoneI18n.translate("setting.set.settingsNotFound"));
         } catch (Exception ex) {
-            Helper.HELPER.logDirect("Exception while reading Baritone settings, some settings may be reset to default values!");
+            Helper.HELPER.logDirect(BaritoneI18n.translate("setting.set.settingsReadError"));
             ex.printStackTrace();
         }
     }
@@ -107,7 +107,7 @@ public class SettingsUtil {
                 out.write(settingToString(setting) + "\n");
             }
         } catch (Exception ex) {
-            Helper.HELPER.logDirect("Exception thrown while saving Baritone settings!");
+            Helper.HELPER.logDirect(BaritoneI18n.translate("setting.set.settingsSaveError"));
             ex.printStackTrace();
         }
     }

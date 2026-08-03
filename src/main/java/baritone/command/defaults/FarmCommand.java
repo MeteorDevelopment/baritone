@@ -51,18 +51,18 @@ public class FarmCommand extends Command {
             IWaypoint waypoint = null;
             switch (waypoints.length) {
                 case 0:
-                    throw new CommandInvalidStateException("No waypoints found");
+                    throw new CommandInvalidStateException(tr("command.farm.noWaypoints"));
                 case 1:
                     waypoint = waypoints[0];
                     break;
                 default:
-                    throw new CommandInvalidStateException("Multiple waypoints were found");
+                    throw new CommandInvalidStateException(tr("command.farm.multipleWaypoints"));
             }
             origin = waypoint.getLocation();
         }
 
         baritone.getFarmProcess().farm(range, origin);
-        logDirect("Farming");
+        logDirect(tr("command.farm.farming"));
     }
 
     @Override
@@ -72,18 +72,11 @@ public class FarmCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Farm nearby crops";
+        return tr("command.farm.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The farm command starts farming nearby plants. It harvests mature crops and plants new ones.",
-                "",
-                "Usage:",
-                "> farm - farms every crop it can find.",
-                "> farm <range> - farm crops within range from the starting position.",
-                "> farm <range> <waypoint> - farm crops within range from waypoint."
-        );
+        return Arrays.asList(tr("command.farm.longDesc").split("\n"));
     }
 }

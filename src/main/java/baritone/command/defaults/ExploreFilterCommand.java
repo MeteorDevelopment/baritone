@@ -47,19 +47,19 @@ public class ExploreFilterCommand extends Command {
             if (args.getString().equalsIgnoreCase("invert")) {
                 invert = true;
             } else {
-                throw new CommandInvalidTypeException(args.consumed(), "either \"invert\" or nothing");
+                throw new CommandInvalidTypeException(args.consumed(), tr("command.explorefilter.invertOrNothing"));
             }
         }
         try {
             baritone.getExploreProcess().applyJsonFilter(file.toPath().toAbsolutePath(), invert);
         } catch (NoSuchFileException e) {
-            throw new CommandInvalidStateException("File not found");
+            throw new CommandInvalidStateException(tr("command.explorefilter.notFound"));
         } catch (JsonSyntaxException e) {
-            throw new CommandInvalidStateException("Invalid JSON syntax");
+            throw new CommandInvalidStateException(tr("command.explorefilter.invalidJson"));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-        logDirect(String.format("Explore filter applied. Inverted: %s", Boolean.toString(invert)));
+        logDirect(tr("command.explorefilter.applied", Boolean.toString(invert)));
     }
 
     @Override
@@ -72,20 +72,11 @@ public class ExploreFilterCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Explore chunks from a json";
+        return tr("command.explorefilter.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "Apply an explore filter before using explore, which tells the explore process which chunks have been explored/not explored.",
-                "",
-                "The JSON file will follow this format: [{\"x\":0,\"z\":0},...]",
-                "",
-                "If 'invert' is specified, the chunks listed will be considered NOT explored, rather than explored.",
-                "",
-                "Usage:",
-                "> explorefilter <path> [invert] - Load the JSON file referenced by the specified path. If invert is specified, it must be the literal word 'invert'."
-        );
+        return Arrays.asList(tr("command.explorefilter.longDesc").split("\n"));
     }
 }

@@ -54,7 +54,7 @@ public class HelpCommand extends Command {
                                     .filter(command -> !command.hiddenFromHelp())
                                     .collect(Collectors.toList())
                     ),
-                    () -> logDirect("All Baritone commands (clickable):"),
+                    () -> logDirect(tr("command.help.allCommands")),
                     command -> {
                         String names = String.join("/", command.getNames());
                         String name = command.getNames().get(0);
@@ -66,7 +66,7 @@ public class HelpCommand extends Command {
                         hoverComponent.setStyle(hoverComponent.getStyle().withColor(ChatFormatting.GRAY));
                         hoverComponent.append(namesComponent);
                         hoverComponent.append("\n" + command.getShortDesc());
-                        hoverComponent.append("\n\nClick to view full help");
+                        hoverComponent.append("\n\n" + tr("command.help.clickFull"));
                         String clickCommand = FORCE_COMMAND_PREFIX + String.format("%s %s", label, command.getNames().get(0));
                         MutableComponent component = Component.literal(name);
                         component.setStyle(component.getStyle().withColor(ChatFormatting.GRAY));
@@ -88,7 +88,7 @@ public class HelpCommand extends Command {
             logDirect("");
             command.getLongDesc().forEach(this::logDirect);
             logDirect("");
-            MutableComponent returnComponent = Component.literal("Click to return to the help menu");
+            MutableComponent returnComponent = Component.literal(tr("command.help.clickReturn"));
             returnComponent.setStyle(returnComponent.getStyle().withClickEvent(new ClickEvent.RunCommand(
                     FORCE_COMMAND_PREFIX + label
             )));
@@ -109,17 +109,11 @@ public class HelpCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "View all commands or help on specific ones";
+        return tr("command.help.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "Using this command, you can view detailed help information on how to use certain commands of Baritone.",
-                "",
-                "Usage:",
-                "> help - Lists all commands and their short descriptions.",
-                "> help <command> - Displays help information on a specific command."
-        );
+        return Arrays.asList(tr("command.help.longDesc").split("\n"));
     }
 }

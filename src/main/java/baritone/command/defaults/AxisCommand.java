@@ -39,7 +39,7 @@ public class AxisCommand extends Command {
         args.requireMax(0);
         Goal goal = new GoalAxis();
         baritone.getCustomGoalProcess().setGoal(goal);
-        logDirect(String.format("Goal: %s", goal.toString()));
+        logDirect(tr("command.axis.goal", goal.toString()));
     }
 
     @Override
@@ -49,16 +49,11 @@ public class AxisCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Set a goal to the axes";
+        return tr("command.axis.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The axis command sets a goal that tells Baritone to head towards the nearest axis. That is, X=0 or Z=0.",
-                "",
-                "Usage:",
-                "> axis"
-        );
+        return Arrays.asList(tr("command.axis.longDesc").split("\n"));
     }
 }

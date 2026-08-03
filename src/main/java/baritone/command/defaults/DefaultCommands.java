@@ -32,8 +32,8 @@ public final class DefaultCommands {
         List<ICommand> commands = new ArrayList<>(Arrays.asList(
                 new HelpCommand(baritone),
                 new SetCommand(baritone),
-                new CommandAlias(baritone, Arrays.asList("modified", "mod", "baritone", "modifiedsettings"), "List modified settings", "set modified"),
-                new CommandAlias(baritone, "reset", "Reset all settings or just one", "set reset"),
+                new CommandAlias(baritone, Arrays.asList("modified", "mod", "baritone", "modifiedsettings"), "command.alias.modified.shortDesc", "set modified"),
+                new CommandAlias(baritone, "reset", "command.alias.reset.shortDesc", "set reset"),
                 new GoalCommand(baritone),
                 new GotoCommand(baritone),
                 new PathCommand(baritone),
@@ -65,8 +65,8 @@ public final class DefaultCommands {
                 new SurfaceCommand(baritone),
                 new ThisWayCommand(baritone),
                 new WaypointsCommand(baritone),
-                new CommandAlias(baritone, "sethome", "Sets your home waypoint", "waypoints save home"),
-                new CommandAlias(baritone, "home", "Path to your home waypoint", "waypoints goto home"),
+                new CommandAlias(baritone, "sethome", "command.alias.sethome.shortDesc", "waypoints save home"),
+                new CommandAlias(baritone, "home", "command.alias.home.shortDesc", "waypoints goto home"),
                 new SelCommand(baritone),
                 new ElytraCommand(baritone)
         ));

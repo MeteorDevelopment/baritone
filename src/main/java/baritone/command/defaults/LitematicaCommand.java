@@ -46,17 +46,11 @@ public class LitematicaCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Builds the loaded schematic";
+        return tr("command.litematica.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "Build a schematic currently open in Litematica.",
-                "",
-                "Usage:",
-                "> litematica",
-                "> litematica <#>"
-        );
+        return Arrays.asList(tr("command.litematica.longDesc").split("\n"));
     }
 }

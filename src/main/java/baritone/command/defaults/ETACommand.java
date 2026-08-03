@@ -42,17 +42,16 @@ public class ETACommand extends Command {
         IPathingControlManager pathingControlManager = baritone.getPathingControlManager();
         IBaritoneProcess process = pathingControlManager.mostRecentInControl().orElse(null);
         if (process == null) {
-            throw new CommandInvalidStateException("No process in control");
+            throw new CommandInvalidStateException(tr("command.eta.noProcess"));
         }
         IPathingBehavior pathingBehavior = baritone.getPathingBehavior();
 
         double ticksRemainingInSegment = pathingBehavior.ticksRemainingInSegment().orElse(Double.NaN);
         double ticksRemainingInGoal = pathingBehavior.estimatedTicksToGoal().orElse(Double.NaN);
 
-        logDirect(String.format(
-                "Next segment: %.1fs (%.0f ticks)\n" +
-                        "Goal: %.1fs (%.0f ticks)",
-                ticksRemainingInSegment / 20, // we just assume tps is 20, it isn't worth the effort that is needed to calculate it exactly
+        logDirect(tr(
+                "command.eta.info",
+                ticksRemainingInSegment / 20,
                 ticksRemainingInSegment,
                 ticksRemainingInGoal / 20,
                 ticksRemainingInGoal
@@ -66,19 +65,11 @@ public class ETACommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "View the current ETA";
+        return tr("command.eta.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The ETA command provides information about the estimated time until the next segment.",
-                "and the goal",
-                "",
-                "Be aware that the ETA to your goal is really unprecise",
-                "",
-                "Usage:",
-                "> eta - View ETA, if present"
-        );
+        return Arrays.asList(tr("command.eta.longDesc").split("\n"));
     }
 }

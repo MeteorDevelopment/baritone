@@ -85,10 +85,10 @@ public class ExecutionControlCommands {
             public void execute(String label, IArgConsumer args) throws CommandException {
                 args.requireMax(0);
                 if (paused[0]) {
-                    throw new CommandInvalidStateException("Already paused");
+                    throw new CommandInvalidStateException(tr("command.pause.already"));
                 }
                 paused[0] = true;
-                logDirect("Paused");
+                logDirect(tr("command.pause.ok"));
             }
 
             @Override
@@ -98,19 +98,12 @@ public class ExecutionControlCommands {
 
             @Override
             public String getShortDesc() {
-                return "Pauses Baritone until you use resume";
+                return tr("command.pause.shortDesc");
             }
 
             @Override
             public List<String> getLongDesc() {
-                return Arrays.asList(
-                        "The pause command tells Baritone to temporarily stop whatever it's doing.",
-                        "",
-                        "This can be used to pause pathing, building, following, whatever. A single use of the resume command will start it right back up again!",
-                        "",
-                        "Usage:",
-                        "> pause"
-                );
+                return Arrays.asList(tr("command.pause.longDesc").split("\n"));
             }
         };
         resumeCommand = new Command(baritone, "resume", "r", "unpause", "unpaws") {
@@ -119,10 +112,10 @@ public class ExecutionControlCommands {
                 args.requireMax(0);
                 baritone.getBuilderProcess().resume();
                 if (!paused[0]) {
-                    throw new CommandInvalidStateException("Not paused");
+                    throw new CommandInvalidStateException(tr("command.resume.notPaused"));
                 }
                 paused[0] = false;
-                logDirect("Resumed");
+                logDirect(tr("command.resume.ok"));
             }
 
             @Override
@@ -132,24 +125,19 @@ public class ExecutionControlCommands {
 
             @Override
             public String getShortDesc() {
-                return "Resumes Baritone after a pause";
+                return tr("command.resume.shortDesc");
             }
 
             @Override
             public List<String> getLongDesc() {
-                return Arrays.asList(
-                        "The resume command tells Baritone to resume whatever it was doing when you last used pause.",
-                        "",
-                        "Usage:",
-                        "> resume"
-                );
+                return Arrays.asList(tr("command.resume.longDesc").split("\n"));
             }
         };
         pausedCommand = new Command(baritone, "paused") {
             @Override
             public void execute(String label, IArgConsumer args) throws CommandException {
                 args.requireMax(0);
-                logDirect(String.format("Baritone is %spaused", paused[0] ? "" : "not "));
+                logDirect(tr("command.paused.state", paused[0] ? "" : "not "));
             }
 
             @Override
@@ -159,17 +147,12 @@ public class ExecutionControlCommands {
 
             @Override
             public String getShortDesc() {
-                return "Tells you if Baritone is paused";
+                return tr("command.paused.shortDesc");
             }
 
             @Override
             public List<String> getLongDesc() {
-                return Arrays.asList(
-                        "The paused command tells you if Baritone is currently paused by use of the pause command.",
-                        "",
-                        "Usage:",
-                        "> paused"
-                );
+                return Arrays.asList(tr("command.paused.longDesc").split("\n"));
             }
         };
         cancelCommand = new Command(baritone, "cancel", "c", "stop") {
@@ -180,7 +163,7 @@ public class ExecutionControlCommands {
                     paused[0] = false;
                 }
                 baritone.getPathingBehavior().cancelEverything();
-                logDirect("ok canceled");
+                logDirect(tr("command.cancel.ok"));
             }
 
             @Override
@@ -190,17 +173,12 @@ public class ExecutionControlCommands {
 
             @Override
             public String getShortDesc() {
-                return "Cancel what Baritone is currently doing";
+                return tr("command.cancel.shortDesc");
             }
 
             @Override
             public List<String> getLongDesc() {
-                return Arrays.asList(
-                        "The cancel command tells Baritone to stop whatever it's currently doing.",
-                        "",
-                        "Usage:",
-                        "> cancel"
-                );
+                return Arrays.asList(tr("command.cancel.longDesc").split("\n"));
             }
         };
     }

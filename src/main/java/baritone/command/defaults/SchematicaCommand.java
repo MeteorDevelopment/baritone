@@ -45,16 +45,11 @@ public class SchematicaCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Builds the loaded schematic";
+        return tr("command.schematica.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "Builds the schematic currently open in Schematica.",
-                "",
-                "Usage:",
-                "> schematica"
-        );
+        return Arrays.asList(tr("command.schematica.longDesc").split("\n"));
     }
 }

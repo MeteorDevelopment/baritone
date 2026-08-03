@@ -20,7 +20,9 @@ package baritone.command.defaults;
 import baritone.api.IBaritone;
 import baritone.api.command.Command;
 import baritone.api.command.argument.IArgConsumer;
+import baritone.api.utils.BaritoneI18n;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -54,11 +56,11 @@ public class CommandAlias extends Command {
 
     @Override
     public String getShortDesc() {
-        return shortDesc;
+        return BaritoneI18n.translate(shortDesc);
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Collections.singletonList(String.format("This command is an alias, for: %s ...", target));
+        return Arrays.asList(tr("command.alias.longDesc", String.join(" ", target)).split("\n"));
     }
 }

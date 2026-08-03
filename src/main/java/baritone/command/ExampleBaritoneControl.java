@@ -27,6 +27,7 @@ import baritone.api.command.helpers.TabCompleteHelper;
 import baritone.api.command.manager.ICommandManager;
 import baritone.api.event.events.ChatEvent;
 import baritone.api.event.events.TabCompleteEvent;
+import baritone.api.utils.BaritoneI18n;
 import baritone.api.utils.Helper;
 import baritone.api.utils.SettingsUtil;
 import baritone.behavior.Behavior;
@@ -81,7 +82,7 @@ public class ExampleBaritoneControl extends Behavior implements Helper {
             component.setStyle(component.getStyle()
                     .withColor(ChatFormatting.WHITE)
                     .withHoverEvent(new HoverEvent.ShowText(
-                            Component.literal("Click to rerun command")
+                            Component.literal(BaritoneI18n.translate("command.help.clickToRerun"))
                     ))
                     .withClickEvent(new ClickEvent.RunCommand(
                             FORCE_COMMAND_PREFIX + msg

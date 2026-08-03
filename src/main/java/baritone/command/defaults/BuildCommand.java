@@ -53,21 +53,14 @@ public class BuildCommand extends Command {
         }
         if (!file.exists()) {
             if (file0.exists()) {
-                throw new CommandInvalidStateException(String.format(
-                        "Cannot load %s because I do not know which schematic format"
-                                + " that is. Please rename the file to include the correct"
-                                + " file extension.",
-                        file));
+                throw new CommandInvalidStateException(tr("command.build.unknownFormat", file));
             }
-            throw new CommandInvalidStateException("Cannot find " + file);
+            throw new CommandInvalidStateException(tr("command.build.cannotFind", file));
         }
         if (!SchematicSystem.INSTANCE.getByFile(file).isPresent()) {
             StringJoiner formats = new StringJoiner(", ");
             SchematicSystem.INSTANCE.getFileExtensions().forEach(formats::add);
-            throw new CommandInvalidStateException(String.format(
-                    "Unsupported schematic format. Reckognized file extensions are: %s",
-                    formats
-            ));
+            throw new CommandInvalidStateException(tr("command.build.unsupportedFormat", formats));
         }
         BetterBlockPos origin = ctx.playerFeet();
         BetterBlockPos buildOrigin;
@@ -80,9 +73,9 @@ public class BuildCommand extends Command {
         }
         boolean success = baritone.getBuilderProcess().build(file.getName(), file, buildOrigin);
         if (!success) {
-            throw new CommandInvalidStateException("Couldn't load the schematic. Either your schematic is corrupt or this is a bug.");
+            throw new CommandInvalidStateException(tr("command.build.corrupt"));
         }
-        logDirect(String.format("Successfully loaded schematic for building\nOrigin: %s", buildOrigin));
+        logDirect(tr("command.build.success", buildOrigin));
     }
 
     @Override
@@ -98,17 +91,11 @@ public class BuildCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Build a schematic";
+        return tr("command.build.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "Build a schematic from a file.",
-                "",
-                "Usage:",
-                "> build <filename> - Loads and builds '<filename>.schematic'",
-                "> build <filename> <x> <y> <z> - Custom position"
-        );
+        return Arrays.asList(tr("command.build.longDesc").split("\n"));
     }
 }

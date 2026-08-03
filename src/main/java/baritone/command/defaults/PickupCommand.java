@@ -47,10 +47,10 @@ public class PickupCommand extends Command {
         }
         if (collecting.isEmpty()) {
             baritone.getFollowProcess().pickup(stack -> true);
-            logDirect("Picking up all items");
+            logDirect(tr("command.pickup.all"));
         } else {
             baritone.getFollowProcess().pickup(stack -> collecting.contains(stack.getItem()));
-            logDirect("Picking up these items:");
+            logDirect(tr("command.pickup.these"));
             collecting.stream().map(BuiltInRegistries.ITEM::getKey).map(Identifier::toString).forEach(this::logDirect);
         }
     }
@@ -68,15 +68,11 @@ public class PickupCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Pickup items";
+        return tr("command.pickup.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "Usage:",
-                "> pickup - Pickup anything",
-                "> pickup <item1> <item2> <...> - Pickup certain items"
-        );
+        return Arrays.asList(tr("command.pickup.longDesc").split("\n"));
     }
 }

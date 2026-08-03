@@ -27,6 +27,7 @@ import baritone.api.command.helpers.TabCompleteHelper;
 import baritone.api.pathing.goals.Goal;
 import baritone.api.process.ICustomGoalProcess;
 import baritone.api.process.IElytraProcess;
+import baritone.api.utils.BaritoneI18n;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.network.chat.ClickEvent;
@@ -52,7 +53,7 @@ public class ElytraCommand extends Command {
         final ICustomGoalProcess customGoalProcess = baritone.getCustomGoalProcess();
         final IElytraProcess elytra = baritone.getElytraProcess();
         if (args.hasExactlyOne() && args.peekString().equals("supported")) {
-            logDirect(elytra.isLoaded() ? "yes" : unsupportedSystemMessage());
+            logDirect(elytra.isLoaded() ? tr("command.elytra.yes") : unsupportedSystemMessage());
             return;
         }
         if (!elytra.isLoaded()) {
@@ -69,10 +70,10 @@ public class ElytraCommand extends Command {
             }
             Goal iGoal = customGoalProcess.mostRecentGoal();
             if (iGoal == null) {
-                throw new CommandInvalidStateException("No goal has been set");
+                throw new CommandInvalidStateException(tr("command.elytra.noGoal"));
             }
             if (ctx.world().dimension() != Level.NETHER) {
-                throw new CommandInvalidStateException("Only works in the nether");
+                throw new CommandInvalidStateException(tr("command.elytra.netherOnly"));
             }
             try {
                 elytra.pathTo(iGoal);
@@ -86,16 +87,16 @@ public class ElytraCommand extends Command {
         switch (action) {
             case "reset": {
                 elytra.resetState();
-                logDirect("Reset state but still flying to same goal");
+                logDirect(tr("command.elytra.reset"));
                 break;
             }
             case "repack": {
                 elytra.repackChunks();
-                logDirect("Queued all loaded chunks for repacking");
+                logDirect(tr("command.elytra.repack"));
                 break;
             }
             default: {
-                throw new CommandInvalidStateException("Invalid action");
+                throw new CommandInvalidStateException(tr("command.elytra.invalidAction"));
             }
         }
     }
@@ -196,30 +197,17 @@ public class ElytraCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "elytra time";
+        return tr("command.elytra.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The elytra command tells baritone to, in the nether, automatically fly to the current goal.",
-                "",
-                "Usage:",
-                "> elytra - fly to the current goal",
-                "> elytra reset - Resets the state of the process, but will try to keep flying to the same goal.",
-                "> elytra repack - Queues all of the chunks in render distance to be given to the native library.",
-                "> elytra supported - Tells you if baritone ships a native library that is compatible with your PC."
-        );
+        return Arrays.asList(tr("command.elytra.longDesc").split("\n"));
     }
 
     private static String unsupportedSystemMessage() {
         final String osArch = System.getProperty("os.arch");
         final String osName = System.getProperty("os.name");
-        return String.format(
-                "Failed loading native library. Your CPU is %s and your operating system is %s. " +
-                        "Supported architectures are 64 bit x86, and 64 bit ARM. Supported operating systems are Windows, " +
-                        "Linux, and Mac",
-                osArch, osName
-        );
+        return BaritoneI18n.translate("command.elytra.nativeFailed", osArch, osName);
     }
 }

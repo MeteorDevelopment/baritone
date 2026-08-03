@@ -36,7 +36,7 @@ public class SaveAllCommand extends Command {
     public void execute(String label, IArgConsumer args) throws CommandException {
         args.requireMax(0);
         ctx.worldData().getCachedWorld().save();
-        logDirect("Saved");
+        logDirect(tr("command.saveall.ok"));
     }
 
     @Override
@@ -46,16 +46,11 @@ public class SaveAllCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Saves Baritone's cache for this world";
+        return tr("command.saveall.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The saveall command saves Baritone's world cache.",
-                "",
-                "Usage:",
-                "> saveall"
-        );
+        return Arrays.asList(tr("command.saveall.longDesc").split("\n"));
     }
 }

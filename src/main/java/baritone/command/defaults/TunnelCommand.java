@@ -45,7 +45,7 @@ public class TunnelCommand extends Command {
             int depth = Integer.parseInt(args.getArgs().get(2).getValue());
 
             if (width < 1 || height < 2 || depth < 1 || height > ctx.world().getMaxY()){
-                logDirect("Width and depth must at least be 1 block; Height must at least be 2 blocks, and cannot be greater than the build limit.");
+                logDirect(tr("command.tunnel.invalidSize"));
                 cont = false;
             }
 
@@ -76,7 +76,7 @@ public class TunnelCommand extends Command {
                     default:
                         throw new IllegalStateException("Unexpected value: " + enumFacing);
                 }
-                logDirect(String.format("Creating a tunnel %s block(s) high, %s block(s) wide, and %s block(s) deep", height + 1, width + 1, depth));
+                logDirect(tr("command.tunnel.creating", height + 1, width + 1, depth));
                 baritone.getBuilderProcess().clearArea(corner1, corner2);
             }
         } else {
@@ -85,7 +85,7 @@ public class TunnelCommand extends Command {
                     ctx.player().getDirection()
             );
             baritone.getCustomGoalProcess().setGoalAndPath(goal);
-            logDirect(String.format("Goal: %s", goal.toString()));
+            logDirect(tr("command.tunnel.goal", goal.toString()));
         }
     }
 
@@ -96,17 +96,11 @@ public class TunnelCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Set a goal to tunnel in your current direction";
+        return tr("command.tunnel.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The tunnel command sets a goal that tells Baritone to mine completely straight in the direction that you're facing.",
-                "",
-                "Usage:",
-                "> tunnel - No arguments, mines in a 1x2 radius.",
-                "> tunnel <height> <width> <depth> - Tunnels in a user defined height, width and depth."
-        );
+        return Arrays.asList(tr("command.tunnel.longDesc").split("\n"));
     }
 }

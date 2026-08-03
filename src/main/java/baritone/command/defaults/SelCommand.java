@@ -90,35 +90,35 @@ public class SelCommand extends Command {
         }
         if (action == Action.POS1 || action == Action.POS2) {
             if (action == Action.POS2 && pos1 == null) {
-                throw new CommandInvalidStateException("Set pos1 first before using pos2");
+                throw new CommandInvalidStateException(tr("command.sel.setPos1First"));
             }
             BetterBlockPos playerPos = ctx.viewerPos();
             BetterBlockPos pos = args.hasAny() ? args.getDatatypePost(RelativeBlockPos.INSTANCE, playerPos) : playerPos;
             args.requireMax(0);
             if (action == Action.POS1) {
                 pos1 = pos;
-                logDirect("Position 1 has been set");
+                logDirect(tr("command.sel.pos1Set"));
             } else {
                 manager.addSelection(pos1, pos);
                 pos1 = null;
-                logDirect("Selection added");
+                logDirect(tr("command.sel.added"));
             }
         } else if (action == Action.CLEAR) {
             args.requireMax(0);
             pos1 = null;
-            logDirect(String.format("Removed %d selections", manager.removeAllSelections().length));
+            logDirect(tr("command.sel.removed", manager.removeAllSelections().length));
         } else if (action == Action.UNDO) {
             args.requireMax(0);
             if (pos1 != null) {
                 pos1 = null;
-                logDirect("Undid pos1");
+                logDirect(tr("command.sel.undidPos1"));
             } else {
                 ISelection[] selections = manager.getSelections();
                 if (selections.length < 1) {
-                    throw new CommandInvalidStateException("Nothing to undo!");
+                    throw new CommandInvalidStateException(tr("command.sel.noUndo"));
                 } else {
                     pos1 = manager.removeSelection(selections[selections.length - 1]).pos1();
-                    logDirect("Undid pos2");
+                    logDirect(tr("command.sel.undidPos2"));
                 }
             }
         } else if (action.isFillAction()) {
@@ -149,7 +149,7 @@ public class SelCommand extends Command {
             }
             ISelection[] selections = manager.getSelections();
             if (selections.length == 0) {
-                throw new CommandInvalidStateException("No selections");
+                throw new CommandInvalidStateException(tr("command.sel.noSelections"));
             }
             BetterBlockPos origin = selections[0].min();
             CompositeSchematic composite = new CompositeSchematic(0, 0, 0);
@@ -195,15 +195,15 @@ public class SelCommand extends Command {
                 ISchematic schematic = create.apply(new FillSchematic(size.getX(), size.getY(), size.getZ(), type));
                 composite.put(schematic, min.x - origin.x, min.y - origin.y, min.z - origin.z);
             }
-            baritone.getBuilderProcess().build("Fill", composite, origin);
-            logDirect("Filling now");
+            baritone.getBuilderProcess().build(tr("command.sel.fill"), composite, origin);
+            logDirect(tr("command.sel.filling"));
         } else if (action == Action.COPY) {
             BetterBlockPos playerPos = ctx.viewerPos();
             BetterBlockPos pos = args.hasAny() ? args.getDatatypePost(RelativeBlockPos.INSTANCE, playerPos) : playerPos;
             args.requireMax(0);
             ISelection[] selections = manager.getSelections();
             if (selections.length < 1) {
-                throw new CommandInvalidStateException("No selections");
+                throw new CommandInvalidStateException(tr("command.sel.noSelections"));
             }
             BlockStateInterface bsi = new BlockStateInterface(ctx);
             BetterBlockPos origin = selections[0].min();
@@ -232,27 +232,27 @@ public class SelCommand extends Command {
             }
             clipboard = composite;
             clipboardOffset = origin.subtract(pos);
-            logDirect("Selection copied");
+            logDirect(tr("command.sel.copied"));
         } else if (action == Action.PASTE) {
             BetterBlockPos playerPos = ctx.viewerPos();
             BetterBlockPos pos = args.hasAny() ? args.getDatatypePost(RelativeBlockPos.INSTANCE, playerPos) : playerPos;
             args.requireMax(0);
             if (clipboard == null) {
-                throw new CommandInvalidStateException("You need to copy a selection first");
+                throw new CommandInvalidStateException(tr("command.sel.needCopy"));
             }
-            baritone.getBuilderProcess().build("Fill", clipboard, pos.offset(clipboardOffset));
-            logDirect("Building now");
+            baritone.getBuilderProcess().build(tr("command.sel.fill"), clipboard, pos.offset(clipboardOffset));
+            logDirect(tr("command.sel.building"));
         } else if (action == Action.EXPAND || action == Action.CONTRACT || action == Action.SHIFT) {
             args.requireExactly(3);
             TransformTarget transformTarget = TransformTarget.getByName(args.getString());
             if (transformTarget == null) {
-                throw new CommandInvalidStateException("Invalid transform type");
+                throw new CommandInvalidStateException(tr("command.sel.invalidTransform"));
             }
             Direction direction = args.getDatatypeFor(ForDirection.INSTANCE);
             int blocks = args.getAs(Integer.class);
             ISelection[] selections = manager.getSelections();
             if (selections.length < 1) {
-                throw new CommandInvalidStateException("No selections found");
+                throw new CommandInvalidStateException(tr("command.sel.noSelectionsFound"));
             }
             selections = transformTarget.transform(selections);
             for (ISelection selection : selections) {
@@ -264,7 +264,7 @@ public class SelCommand extends Command {
                     manager.shift(selection, direction, blocks);
                 }
             }
-            logDirect(String.format("Transformed %d selections", selections.length));
+            logDirect(tr("command.sel.transformed", selections.length));
         }
     }
 
@@ -314,42 +314,12 @@ public class SelCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "WorldEdit-like commands";
+        return tr("command.sel.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The sel command allows you to manipulate Baritone's selections, similarly to WorldEdit.",
-                "",
-                "Using these selections, you can clear areas, fill them with blocks, or something else.",
-                "",
-                "The expand/contract/shift commands use a kind of selector to choose which selections to target. Supported ones are a/all, n/newest, and o/oldest.",
-                "",
-                "Usage:",
-                "> sel pos1/p1/1 - Set position 1 to your current position.",
-                "> sel pos1/p1/1 <x> <y> <z> - Set position 1 to a relative position.",
-                "> sel pos2/p2/2 - Set position 2 to your current position.",
-                "> sel pos2/p2/2 <x> <y> <z> - Set position 2 to a relative position.",
-                "",
-                "> sel clear/c - Clear the selection.",
-                "> sel undo/u - Undo the last action (setting positions, creating selections, etc.)",
-                "> sel set/fill/s/f [block] - Completely fill all selections with a block.",
-                "> sel walls/w [block] - Fill in the walls of the selection with a specified block.",
-                "> sel shell/shl [block] - The same as walls, but fills in a ceiling and floor too.",
-                "> sel sphere/sph [block] - Fills the selection with a sphere bounded by the sides.",
-                "> sel hsphere/hsph [block] - The same as sphere, but hollow.",
-                "> sel cylinder/cyl [block] <axis> - Fills the selection with a cylinder bounded by the sides, oriented about the given axis. (default=y)",
-                "> sel hcylinder/hcyl [block] <axis> - The same as cylinder, but hollow.",
-                "> sel cleararea/ca - Basically 'set air'.",
-                "> sel replace/r <blocks...> <with> - Replaces blocks with another block.",
-                "> sel copy/cp <x> <y> <z> - Copy the selected area relative to the specified or your position.",
-                "> sel paste/p <x> <y> <z> - Build the copied area relative to the specified or your position.",
-                "",
-                "> sel expand <target> <direction> <blocks> - Expand the targets.",
-                "> sel contract <target> <direction> <blocks> - Contract the targets.",
-                "> sel shift <target> <direction> <blocks> - Shift the targets (does not resize)."
-        );
+        return Arrays.asList(tr("command.sel.longDesc").split("\n"));
     }
 
     enum Action {

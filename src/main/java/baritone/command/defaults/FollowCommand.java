@@ -27,6 +27,7 @@ import baritone.api.command.datatypes.NearbyPlayer;
 import baritone.api.command.exception.CommandErrorMessageException;
 import baritone.api.command.exception.CommandException;
 import baritone.api.command.helpers.TabCompleteHelper;
+import baritone.api.utils.BaritoneI18n;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
@@ -74,16 +75,16 @@ public class FollowCommand extends Command {
             );
         }
         if (group != null) {
-            logDirect(String.format("Following all %s", group.name().toLowerCase(Locale.US)));
+            logDirect(tr("command.follow.all", group.name().toLowerCase(Locale.US)));
         } else {
             if (classes.isEmpty()) {
                 if (entities.isEmpty()) throw new NoEntitiesException();
-                logDirect("Following these entities:");
+                logDirect(tr("command.follow.theseEntities"));
                 entities.stream()
                         .map(Entity::toString)
                         .forEach(this::logDirect);
             } else {
-                logDirect("Following these types of entities:");
+                logDirect(tr("command.follow.theseTypes"));
                 classes.stream()
                         .map(BuiltInRegistries.ENTITY_TYPE::getKey)
                         .map(Objects::requireNonNull)
@@ -120,20 +121,12 @@ public class FollowCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Follow entity things";
+        return tr("command.follow.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The follow command tells Baritone to follow certain kinds of entities.",
-                "",
-                "Usage:",
-                "> follow entities - Follows all entities.",
-                "> follow entity <entity1> <entity2> <...> - Follow certain entities (for example 'skeleton', 'horse' etc.)",
-                "> follow players - Follow players",
-                "> follow player <username1> <username2> <...> - Follow certain players"
-        );
+        return Arrays.asList(tr("command.follow.longDesc").split("\n"));
     }
 
     @KeepName
@@ -164,7 +157,7 @@ public class FollowCommand extends Command {
     public static class NoEntitiesException extends CommandErrorMessageException {
 
         protected NoEntitiesException() {
-            super("No valid entities in range!");
+            super(BaritoneI18n.translate("command.follow.noEntities"));
         }
 
     }

@@ -70,7 +70,7 @@ public class FindCommand extends Command {
         if (components.length > 0) {
             Arrays.asList(components).forEach(this::logDirect);
         } else {
-            logDirect("No positions known, are you sure the blocks are cached?");
+            logDirect(tr("command.find.noPositions"));
         }
     }
 
@@ -78,7 +78,7 @@ public class FindCommand extends Command {
         String positionText = String.format("%s %s %s", pos.x, pos.y, pos.z);
         String command = String.format("%sgoal %s", FORCE_COMMAND_PREFIX, positionText);
         MutableComponent baseComponent = Component.literal(pos.toString());
-        MutableComponent hoverComponent = Component.literal("Click to set goal to this position");
+        MutableComponent hoverComponent = Component.literal(tr("command.find.clickGoal"));
         baseComponent.setStyle(baseComponent.getStyle()
                 .withColor(ChatFormatting.GRAY)
                 .withInsertion(positionText)
@@ -102,17 +102,11 @@ public class FindCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Find positions of a certain block";
+        return tr("command.find.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The find command searches through Baritone's cache and attempts to find the location of the block.",
-                "Tab completion will suggest only cached blocks and uncached blocks can not be found.",
-                "",
-                "Usage:",
-                "> find <block> [...] - Try finding the listed blocks"
-        );
+        return Arrays.asList(tr("command.find.longDesc").split("\n"));
     }
 }

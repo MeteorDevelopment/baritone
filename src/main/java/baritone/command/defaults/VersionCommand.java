@@ -38,9 +38,9 @@ public class VersionCommand extends Command {
         args.requireMax(0);
         String version = getClass().getPackage().getImplementationVersion();
         if (version == null) {
-            throw new CommandInvalidStateException("Null version (this is normal in a dev environment)");
+            throw new CommandInvalidStateException(tr("command.version.null"));
         } else {
-            logDirect(String.format("You are running Baritone v%s", version));
+            logDirect(tr("command.version.running", version));
         }
     }
 
@@ -51,16 +51,11 @@ public class VersionCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "View the Baritone version";
+        return tr("command.version.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The version command prints the version of Baritone you're currently running.",
-                "",
-                "Usage:",
-                "> version - View version information, if present"
-        );
+        return Arrays.asList(tr("command.version.longDesc").split("\n"));
     }
 }

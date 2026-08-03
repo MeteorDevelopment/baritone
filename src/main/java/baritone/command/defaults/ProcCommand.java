@@ -42,14 +42,10 @@ public class ProcCommand extends Command {
         IPathingControlManager pathingControlManager = baritone.getPathingControlManager();
         IBaritoneProcess process = pathingControlManager.mostRecentInControl().orElse(null);
         if (process == null) {
-            throw new CommandInvalidStateException("No process in control");
+            throw new CommandInvalidStateException(tr("command.proc.noProcess"));
         }
-        logDirect(String.format(
-                "Class: %s\n" +
-                        "Priority: %f\n" +
-                        "Temporary: %b\n" +
-                        "Display name: %s\n" +
-                        "Last command: %s",
+        logDirect(tr(
+                "command.proc.info",
                 process.getClass().getTypeName(),
                 process.priority(),
                 process.isTemporary(),
@@ -57,7 +53,7 @@ public class ProcCommand extends Command {
                 pathingControlManager
                         .mostRecentCommand()
                         .map(PathingCommand::toString)
-                        .orElse("None")
+                        .orElse(tr("command.proc.none"))
         ));
     }
 
@@ -68,18 +64,11 @@ public class ProcCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "View process state information";
+        return tr("command.proc.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The proc command provides miscellaneous information about the process currently controlling Baritone.",
-                "",
-                "You are not expected to understand this if you aren't familiar with how Baritone works.",
-                "",
-                "Usage:",
-                "> proc - View process information, if present"
-        );
+        return Arrays.asList(tr("command.proc.longDesc").split("\n"));
     }
 }

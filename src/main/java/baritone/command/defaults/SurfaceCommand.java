@@ -44,7 +44,7 @@ public class SurfaceCommand extends Command {
         // Ensure this command will not run if you are above the surface level and the block above you is air
         // As this would imply that your are already on the open surface
         if (playerPos.getY() > surfaceLevel && ctx.world().getBlockState(playerPos.above()).getBlock() instanceof AirBlock) {
-            logDirect("Already at surface");
+            logDirect(tr("command.surface.already"));
             return;
         }
 
@@ -55,12 +55,12 @@ public class SurfaceCommand extends Command {
 
             if (!(ctx.world().getBlockState(newPos).getBlock() instanceof AirBlock) && newPos.getY() > playerPos.getY()) {
                 Goal goal = new GoalBlock(newPos.above());
-                logDirect(String.format("Going to: %s", goal.toString()));
+                logDirect(tr("command.surface.goingTo", goal.toString()));
                 baritone.getCustomGoalProcess().setGoalAndPath(goal);
                 return;
             }
         }
-        logDirect("No higher location found");
+        logDirect(tr("command.surface.notFound"));
     }
 
     @Override
@@ -70,19 +70,11 @@ public class SurfaceCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Used to get out of caves, mines, ...";
+        return tr("command.surface.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The surface/top command tells Baritone to head towards the closest surface-like area.",
-                "",
-                "This can be the surface or the highest available air space, depending on circumstances.",
-                "",
-                "Usage:",
-                "> surface - Used to get out of caves, mines, ...",
-                "> top - Used to get out of caves, mines, ..."
-        );
+        return Arrays.asList(tr("command.surface.longDesc").split("\n"));
     }
 }

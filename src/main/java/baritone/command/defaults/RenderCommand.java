@@ -46,7 +46,7 @@ public class RenderCommand extends Command {
                 ctx.world().getMaxY(),
                 origin.z + renderDistance
         );
-        logDirect("Done");
+        logDirect(tr("command.render.ok"));
     }
 
     @Override
@@ -56,16 +56,11 @@ public class RenderCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Fix glitched chunks";
+        return tr("command.render.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The render command fixes glitched chunk rendering without having to reload all of them.",
-                "",
-                "Usage:",
-                "> render"
-        );
+        return Arrays.asList(tr("command.render.longDesc").split("\n"));
     }
 }

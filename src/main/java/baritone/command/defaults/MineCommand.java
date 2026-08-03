@@ -45,7 +45,7 @@ public class MineCommand extends Command {
             boms.add(args.getDatatypeFor(ForBlockOptionalMeta.INSTANCE));
         }
         BaritoneAPI.getProvider().getWorldScanner().repack(ctx);
-        logDirect(String.format("Mining %s", boms.toString()));
+        logDirect(tr("command.mine.mining", boms.toString()));
         baritone.getMineProcess().mine(quantity, boms.toArray(new BlockOptionalMeta[0]));
     }
 
@@ -60,20 +60,11 @@ public class MineCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Mine some blocks";
+        return tr("command.mine.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "The mine command allows you to tell Baritone to search for and mine individual blocks.",
-                "",
-                "The specified blocks can be ores, or any other block.",
-                "",
-                "Also see the legitMine settings (see #set l legitMine).",
-                "",
-                "Usage:",
-                "> mine diamond_ore - Mines all diamonds it can find."
-        );
+        return Arrays.asList(tr("command.mine.longDesc").split("\n"));
     }
 }

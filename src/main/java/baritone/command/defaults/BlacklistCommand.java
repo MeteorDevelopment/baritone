@@ -39,12 +39,12 @@ public class BlacklistCommand extends Command {
         args.requireMax(0);
         IGetToBlockProcess proc = baritone.getGetToBlockProcess();
         if (!proc.isActive()) {
-            throw new CommandInvalidStateException("GetToBlockProcess is not currently active");
+            throw new CommandInvalidStateException(tr("command.blacklist.notActive"));
         }
         if (proc.blacklistClosest()) {
-            logDirect("Blacklisted closest instances");
+            logDirect(tr("command.blacklist.success"));
         } else {
-            throw new CommandInvalidStateException("No known locations, unable to blacklist");
+            throw new CommandInvalidStateException(tr("command.blacklist.noLocations"));
         }
     }
 
@@ -55,16 +55,11 @@ public class BlacklistCommand extends Command {
 
     @Override
     public String getShortDesc() {
-        return "Blacklist closest block";
+        return tr("command.blacklist.shortDesc");
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList(
-                "While going to a block this command blacklists the closest block so that Baritone won't attempt to get to it.",
-                "",
-                "Usage:",
-                "> blacklist"
-        );
+        return Arrays.asList(tr("command.blacklist.longDesc").split("\n"));
     }
 }
