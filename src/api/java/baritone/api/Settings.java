@@ -17,6 +17,7 @@
 
 package baritone.api;
 
+import baritone.api.utils.BaritoneI18n;
 import baritone.api.utils.Helper;
 import baritone.api.utils.NotificationHelper;
 import baritone.api.utils.SettingsUtil;
@@ -856,6 +857,12 @@ public final class Settings {
     public final Setting<Boolean> useMessageTag = new Setting<>(false);
 
     /**
+     * The language locale used for Baritone's messages and setting descriptions.
+     * Supported values: "en_us" (default), "zh_cn".
+     */
+    public final Setting<String> locale = new Setting<>("en_us");
+
+    /**
      * Echo commands to chat when they are run
      */
     public final Setting<Boolean> echoCommands = new Setting<>(true);
@@ -1615,6 +1622,10 @@ public final class Settings {
          */
         public boolean isJavaOnly() {
             return javaOnly;
+        }
+
+        public String getLocalizedDescription() {
+            return BaritoneI18n.translateSettingDescription(name);
         }
     }
 

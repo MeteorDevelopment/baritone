@@ -18,6 +18,7 @@
 package baritone.api.command;
 
 import baritone.api.IBaritone;
+import baritone.api.utils.BaritoneI18n;
 import baritone.api.utils.IPlayerContext;
 
 import java.util.Collections;
@@ -63,5 +64,13 @@ public abstract class Command implements ICommand {
     @Override
     public final List<String> getNames() {
         return this.names;
+    }
+
+    protected String tr(String key, Object... args) {
+        return BaritoneI18n.translate(key, args);
+    }
+
+    protected String tr(String key) {
+        return BaritoneI18n.translate(key);
     }
 }
